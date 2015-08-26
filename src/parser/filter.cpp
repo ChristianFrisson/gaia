@@ -210,7 +210,11 @@ Filter* FilterParser::parseFilter(const QString& strin) const {
   str.replace('\r', ' ');
 
   int yv;
+#if QT_VERSION >= 0x050000
+  YY_BUFFER_STATE buf = yy_scan_string(str.toLatin1().data());
+#else
   YY_BUFFER_STATE buf = yy_scan_string(str.toAscii().data());
+#endif
 
   Filter* result;
 

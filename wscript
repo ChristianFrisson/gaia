@@ -25,7 +25,7 @@ out = 'build'
 
 
 def options(opt):
-    opt.load('compiler_cxx compiler_c qt4')
+    opt.load('compiler_cxx compiler_c qt5')
     opt.recurse('src')
 
     # whether or not to have all the asserts working
@@ -146,8 +146,10 @@ def configure(conf):
         # add /usr/local/include as the brew formula for yaml doesn't have
         # the cflags properly set
         conf.env.CXXFLAGS += [ '-I/usr/local/include' ]
+        # for MacPorts
+        conf.env.CXXFLAGS += [ '-I/opt/local/include' ]
 
-    conf.load('compiler_cxx compiler_c qt4')
+    conf.load('compiler_cxx compiler_c qt5')
 
     #conf.env['LINKFLAGS'] += [ '--as-needed' ] # TODO do we need this flag?
 
@@ -200,9 +202,9 @@ def configure(conf):
 
     elif sys.platform == 'darwin':
         opts = { 'prefix': prefix,
-             'qtlibdir': '-F' + conf.env['FRAMEWORKPATH_QTCORE'][0] +
-                         ' -framework ' + conf.env['FRAMEWORK_QTCORE'][0],
-             'qtincludedir': '-I' + ' -I'.join(conf.env['INCLUDES_QTCORE']),
+             'qtlibdir': '-F' + conf.env['FRAMEWORKPATH_QT5CORE'][0] +
+                         ' -framework ' + conf.env['FRAMEWORK_QT5CORE'][0],
+             'qtincludedir': '-I' + ' -I'.join(conf.env['INCLUDES_QT5CORE']),
              'version': VERSION,
              'tbblib': tbblib,
              }

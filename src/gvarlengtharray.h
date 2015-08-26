@@ -199,7 +199,11 @@ Q_OUTOFLINE_TEMPLATE void GVarLengthArray<T, Prealloc>::append(const T *abuf, in
         while (i < j)
             new (i++) T(*abuf++);
     } else {
+		#if QT_VERSION >= 0x050000
+		memcpy(&ptr[idx], abuf, asize * sizeof(T));
+		#else
         qMemCopy(&ptr[idx], abuf, asize * sizeof(T));
+		#endif
     }
 }
 
@@ -224,7 +228,11 @@ Q_OUTOFLINE_TEMPLATE void GVarLengthArray<T, Prealloc>::realloc(int asize, int a
                     j->~T();
                 }
             } else {
+                #if QT_VERSION >= 0x050000
+                memcpy(ptr, oldPtr, osize * sizeof(T));
+                #else
                 qMemCopy(ptr, oldPtr, osize * sizeof(T));
+                #endif
             }
         } else {
             ptr = oldPtr;

@@ -27,7 +27,11 @@ class Key {
 
  public:
   Key(QString key) {
+#if QT_VERSION >= 0x050000
+    switch (key[0].toUpper().toLatin1()) {
+#else
     switch (key[0].toUpper().toAscii()) {
+#endif
     case 'A': _note = 0; break;
     case 'B': _note = 2; break;
     case 'C': _note = 3; break;
@@ -40,7 +44,11 @@ class Key {
 
     // is there an alteration or not?
     if (key.size() == 2) {
+#if QT_VERSION >= 0x050000
+      switch (key[1].toLatin1()) {
+#else
       switch (key[1].toAscii()) {
+#endif
       case '#': _note++; break;
       case 'b': _note--; break;
       default: throw GaiaException("impossible to parse key: ", key);

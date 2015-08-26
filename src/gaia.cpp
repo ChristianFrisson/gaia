@@ -42,7 +42,12 @@ const char* version_git_sha = GAIA_GIT_SHA;
 // message handler that aborts execution, so that when run inside gdb we can
 // still get a stack trace. Very useful!
 // got the idea from http://der-dakon.net/blog/KDE/tracing-qassert.html
+#if QT_VERSION >= 0x050000
+static void qtMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &qmsg) {
+  const char *msg = qmsg.toStdString().c_str();
+#else
 static void qtMessageHandler(QtMsgType type, const char *msg) {
+#endif
   fprintf(stderr, "%s\n", msg);
   if (type == QtFatalMsg) {
     abort();
@@ -56,7 +61,11 @@ void init() {
 
   QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
+  #if QT_VERSION >= 0x050000
+  qInstallMessageHandler(qtMessageHandler);
+  #else
   qInstallMsgHandler(qtMessageHandler);
+  #endif
 
   registerAnalyzers();
   registerAppliers();

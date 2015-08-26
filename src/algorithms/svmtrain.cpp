@@ -183,7 +183,11 @@ Transformation SVMTrain::analyze(const DataSet* dataset) const {
   QString modelFilename = modelFile.fileName();
   modelFile.close();
 
+#if QT_VERSION >= 0x050000
+  if (svm_save_model(modelFilename.toLatin1().constData(), model) == -1) {
+#else
   if (svm_save_model(modelFilename.toAscii().constData(), model) == -1) {
+#endif
     throw GaiaException("SVMTrain: error while saving SVM model to temp file");
   }
 
@@ -195,7 +199,11 @@ Transformation SVMTrain::analyze(const DataSet* dataset) const {
   // if we asked for the model to be output specifically, also do it
   if (_params.value("modelFilename", "").toString() != "") {
     QString filename = _params.value("modelFilename").toString();
+#if QT_VERSION >= 0x050000
+    svm_save_model(filename.toLatin1().constData(), model);
+#else
     svm_save_model(filename.toAscii().constData(), model);
+#endif
   }
 
   // destroy the model allocated by libsvm
