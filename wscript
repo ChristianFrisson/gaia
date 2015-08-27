@@ -119,7 +119,7 @@ def configure(conf):
         conf.check_cfg(package='yaml-0.1', uselib_store='YAML',
                       args=['--cflags', '--libs'])
 
-    conf.env['USELIB'] = [ 'QTCORE', 'YAML' ]
+    conf.env['USELIB'] = [ 'QT5CORE', 'YAML' ]
 
     # optional dependency: tbb, if asked for it
     conf.env['WITH_TBB'] = conf.options.tbb
@@ -129,7 +129,7 @@ def configure(conf):
     # optional dependency: QtNetwork for Cyclops Server
     conf.env['WITH_CYCLOPS'] = conf.options.cyclops
     if conf.env['WITH_CYCLOPS']:
-        conf.env['USELIB'] += [ 'QTNETWORK' ]
+        conf.env['USELIB'] += [ 'QT5NETWORK' ]
 
     conf.env.DEFINES = ['GAIA_VERSION="%s"' % VERSION, 'GAIA_GIT_SHA="%s"' % GIT_SHA]
 
@@ -178,8 +178,8 @@ def configure(conf):
         print "========"
 
         opts = { 'prefix': prefix,
-             'qtlibdir': conf.env['LIB_QTCORE'] or '/usr/lib',
-             'qtincludedir': '-I' + ' -I'.join(conf.env['INCLUDES_QTCORE']),
+             'qtlibdir': conf.env['LIB_QT5CORE'] or '/usr/lib',
+             'qtincludedir': '-I' + ' -I'.join(conf.env['INCLUDES_QT5CORE']),
              'version': VERSION,
              'tbblib': tbblib,
              }
@@ -194,7 +194,7 @@ def configure(conf):
         Name: libgaia2
         Description: A library for doing similarity in semimetric spaces
         Version: %(version)s
-        Libs: -L${libdir} -L${qtlibdir} -lgaia2 -lQtCore -lyaml %(tbblib)s
+        Libs: -L${libdir} -L${qtlibdir} -lgaia2 -lQt5Core -lQt5Concurrent -lyaml %(tbblib)s
         Cflags: -I${includedir}/gaia2 ${qtincludes}
         ''' % opts
         print "---->"
@@ -203,8 +203,10 @@ def configure(conf):
     elif sys.platform == 'darwin':
         opts = { 'prefix': prefix,
              'qtlibdir': '-F' + conf.env['FRAMEWORKPATH_QT5CORE'][0] +
-                         ' -framework ' + conf.env['FRAMEWORK_QT5CORE'][0],
-             'qtincludedir': '-I' + ' -I'.join(conf.env['INCLUDES_QT5CORE']),
+                         ' -framework ' + conf.env['FRAMEWORK_QT5CORE'][0] +
+                         ' -F' + conf.env['FRAMEWORKPATH_QT5CONCURRENT'][0] +
+                         ' -framework ' + conf.env['FRAMEWORK_QT5CONCURRENT'][0],
+             'qtincludedir': '-I' + ' -I'.join(conf.env['INCLUDES_QT5CORE']) + ' -I'.join(conf.env['INCLUDES_QT5CONCURRENT']),
              'version': VERSION,
              'tbblib': tbblib,
              }
@@ -221,7 +223,6 @@ def configure(conf):
         Libs: -L${libdir} ${qtlibdir} -lgaia2 -lyaml %(tbblib)s
         Cflags: -I${includedir}/gaia2 ${qtincludes}
         ''' % opts
-
 
     pcfile = '\n'.join([ l.strip() for l in pcfile.split('\n') ])
     conf.env.pcfile = pcfile
