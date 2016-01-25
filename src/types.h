@@ -23,6 +23,7 @@
 #include <QMap>
 #include <QStringList>
 #include <QPointF>
+#include <QDataStream>
 #include <Eigen/Dense>
 #include "osdetect.h"
 #include "gaia.h"
